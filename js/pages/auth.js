@@ -152,7 +152,9 @@ function renderLogin(container) {
   container.innerHTML = `
     <div class="auth-layout">
       <div class="auth-panel">
-        <div style="position:relative;z-index:1;max-width:400px;text-align:center">
+        <div class="auth-visual">
+          <div class="auth-float-shape shape-one"></div>
+          <div class="auth-float-shape shape-two"></div>
           ${authIllustrationSVG()}
           <h2 style="color:white;font-size:var(--fs-2xl);margin-bottom:var(--space-4);margin-top:var(--space-6)">
             "Let's find the support that's right for you."

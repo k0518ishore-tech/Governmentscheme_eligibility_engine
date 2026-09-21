@@ -9,7 +9,8 @@ function renderDashboard(container) {
   const recommended = SCHEMES.slice(0, 3);
 
   container.innerHTML = appLayout('dashboard', `
-    <!-- Greeting Banner -->
+    <div class="dashboard-shell">
+      <!-- Greeting Banner -->
     <div class="greeting-banner animate-up" style="margin-bottom:var(--space-6)">
       <div class="flex justify-between items-center flex-wrap gap-4">
         <div>
@@ -128,6 +129,7 @@ function renderDashboard(container) {
           `).join('')}
         </div>
       </div>
+    </div>
     </div>
   `);
 }
