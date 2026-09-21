@@ -5,29 +5,34 @@
 /* ── 1. CSS Custom Properties ─────────────────────────────── */
 :root {
   /* Color Palette */
-  --clr-bg:           #F4F7FB;
-  --clr-bg-alt:       #EEF2F9;
+  --clr-bg:           #F3F6FA;
+  --clr-bg-alt:       #EAF0F7;
   --clr-surface:      #FFFFFF;
-  --clr-surface-2:    #F8FAFD;
-  --clr-border:       #E2E8F0;
-  --clr-border-light: #EDF2F7;
-  --clr-brand-glow:   rgba(71, 168, 255, 0.28);
+  --clr-surface-2:    #F8FAFC;
+  --clr-border:       #D9E1EC;
+  --clr-border-light: #EDF3F9;
+  --clr-brand-glow:   rgba(21, 101, 192, 0.18);
   --clr-brand-soft:   #EAF4FF;
 
-  /* Navy */
-  --clr-navy:         #0F3460;
-  --clr-navy-light:   #1A4F8A;
+  /* Navy / Government */
+  --clr-navy:         #0D2D5E;
+  --clr-navy-light:   #1B4F8D;
   --clr-navy-dark:    #091F3D;
 
   /* Primary Blue */
-  --clr-primary:      #1565C0;
-  --clr-primary-hover:#1250A0;
-  --clr-primary-light:#E8F0FE;
+  --clr-primary:      #1A5FBF;
+  --clr-primary-hover:#134C9A;
+  --clr-primary-light:#EAF2FF;
 
   /* Teal / Positive */
-  --clr-teal:         #00897B;
-  --clr-teal-light:   #E0F2F1;
-  --clr-teal-hover:   #00796B;
+  --clr-teal:         #0E9E9A;
+  --clr-teal-light:   #DFF7F5;
+  --clr-teal-hover:   #0D7E7C;
+
+  /* Saffron / Accent */
+  --clr-saffron:      #F2B33D;
+  --clr-saffron-light:#FFF3D6;
+  --clr-saffron-dark: #D89217;
 
   /* Amber / Warning */
   --clr-amber:        #F59E0B;
@@ -240,11 +245,11 @@ small { font-size: var(--fs-sm); }
 .btn:active { transform: scale(0.98); }
 
 .btn-primary {
-  background: var(--clr-primary);
+  background: linear-gradient(135deg, var(--clr-primary) 0%, var(--clr-navy-light) 100%);
   color: #fff;
   border-color: var(--clr-primary);
 }
-.btn-primary:hover { background: var(--clr-primary-hover); border-color: var(--clr-primary-hover); }
+.btn-primary:hover { background: linear-gradient(135deg, var(--clr-primary-hover) 0%, var(--clr-navy) 100%); border-color: var(--clr-primary-hover); }
 
 .btn-navy {
   background: var(--clr-navy);
@@ -345,7 +350,7 @@ small { font-size: var(--fs-sm); }
 .badge-blue    { background: var(--clr-primary-light); color: var(--clr-primary); }
 .badge-teal    { background: var(--clr-teal-light); color: var(--clr-teal); }
 .badge-green   { background: var(--clr-green-light); color: var(--clr-green); }
-.badge-amber   { background: var(--clr-amber-light); color: var(--clr-amber-dark); }
+.badge-amber   { background: var(--clr-saffron-light); color: var(--clr-saffron-dark); }
 .badge-red     { background: var(--clr-red-light); color: var(--clr-red); }
 .badge-navy    { background: #E8EEF8; color: var(--clr-navy); }
 .badge-gray    { background: #F1F5F9; color: var(--clr-text-muted); }
@@ -504,13 +509,13 @@ small { font-size: var(--fs-sm); }
 .nav-logo-icon {
   width: 36px;
   height: 36px;
-  background: linear-gradient(135deg, var(--clr-navy), #1a4f8a 60%, var(--clr-primary));
+  background: linear-gradient(135deg, var(--clr-navy) 0%, var(--clr-primary) 100%);
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 10px 22px rgba(15, 52, 96, 0.18);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.12);
 }
 .nav-links {
   display: flex;
@@ -1079,8 +1084,8 @@ tr:hover td { background: var(--clr-surface-2); }
   border: 1px solid transparent;
 }
 .alert-info    { background: var(--clr-primary-light); border-color: var(--clr-primary); color: var(--clr-primary); }
-.alert-success { background: var(--clr-green-light); border-color: var(--clr-teal); color: var(--clr-teal); }
-.alert-warning { background: var(--clr-amber-light); border-color: var(--clr-amber); color: var(--clr-amber-dark); }
+.alert-success { background: var(--clr-teal-light); border-color: var(--clr-teal); color: var(--clr-teal); }
+.alert-warning { background: var(--clr-saffron-light); border-color: var(--clr-saffron); color: var(--clr-saffron-dark); }
 .alert-error   { background: var(--clr-red-light); border-color: var(--clr-red); color: var(--clr-red); }
 
 /* ── 18. Loading States ─────────────────────────────────── */
@@ -1246,8 +1251,8 @@ tr:hover td { background: var(--clr-surface-2); }
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  background: var(--clr-primary-light);
-  color: var(--clr-primary);
+  background: var(--clr-saffron-light);
+  color: var(--clr-saffron-dark);
   font-size: var(--fs-xs);
   font-weight: 700;
   padding: var(--space-2) var(--space-3);
@@ -1713,13 +1718,13 @@ tr:hover td { background: var(--clr-surface-2); }
 
 /* ── 32. Dashboard Specific ─────────────────────────────── */
 .greeting-banner {
-  background: linear-gradient(135deg, var(--clr-navy) 0%, #1A4F8A 100%);
+  background: linear-gradient(135deg, var(--clr-navy) 0%, var(--clr-navy-light) 100%);
   border-radius: var(--radius-xl);
   padding: var(--space-8);
   color: white;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 18px 40px rgba(15, 52, 96, 0.16);
+  box-shadow: 0 18px 40px rgba(13, 45, 94, 0.18);
   transform: translateY(0);
   transition: transform 420ms ease, box-shadow 420ms ease;
 }
