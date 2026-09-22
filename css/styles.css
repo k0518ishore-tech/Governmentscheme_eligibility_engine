@@ -2,57 +2,219 @@
    SchemeGuide Design System — CSS
    ============================================================ */
 
-/* ── 1. CSS Custom Properties ─────────────────────────────── */
-:root {
-  /* Color Palette */
-  --clr-bg:           #F3F6FA;
-  --clr-bg-alt:       #EAF0F7;
+/* ── 1. CSS Custom Properties & 5 Theme Palettes ──────────── */
+:root, [data-theme="sovereign"] {
+  /* Color Palette 1: Sovereign National (Default Official Navy & Saffron) */
+  --clr-bg:           #F4F6F9;
+  --clr-bg-alt:       #E8EEF5;
   --clr-surface:      #FFFFFF;
   --clr-surface-2:    #F8FAFC;
-  --clr-border:       #D9E1EC;
-  --clr-border-light: #EDF3F9;
-  --clr-brand-glow:   rgba(21, 101, 192, 0.18);
-  --clr-brand-soft:   #EAF4FF;
+  --clr-border:       #D1DCE5;
+  --clr-border-light: #E9F0F6;
+  --clr-brand-glow:   rgba(13, 45, 94, 0.18);
+  --clr-brand-soft:   #EBF1FA;
 
-  /* Navy / Government */
   --clr-navy:         #0D2D5E;
-  --clr-navy-light:   #1B4F8D;
-  --clr-navy-dark:    #091F3D;
+  --clr-navy-light:   #184485;
+  --clr-navy-dark:    #061B3B;
 
-  /* Primary Blue */
-  --clr-primary:      #1A5FBF;
-  --clr-primary-hover:#134C9A;
-  --clr-primary-light:#EAF2FF;
+  --clr-primary:      #0D2D5E;
+  --clr-primary-hover:#082046;
+  --clr-primary-light:#EBF1FA;
 
-  /* Teal / Positive */
-  --clr-teal:         #0E9E9A;
-  --clr-teal-light:   #DFF7F5;
-  --clr-teal-hover:   #0D7E7C;
+  --clr-teal:         #059669;
+  --clr-teal-light:   #ECFDF5;
+  --clr-teal-hover:   #047857;
 
-  /* Saffron / Accent */
-  --clr-saffron:      #F2B33D;
-  --clr-saffron-light:#FFF3D6;
-  --clr-saffron-dark: #D89217;
+  --clr-saffron:      #D97706;
+  --clr-saffron-light:#FEF3C7;
+  --clr-saffron-dark: #B45309;
 
-  /* Amber / Warning */
   --clr-amber:        #F59E0B;
-  --clr-amber-light:  #FFF8E7;
+  --clr-amber-light:  #FFFBEB;
   --clr-amber-dark:   #D97706;
 
-  /* Red / Error */
   --clr-red:          #DC2626;
   --clr-red-light:    #FEF2F2;
   --clr-red-hover:    #B91C1C;
 
-  /* Success */
   --clr-green:        #16A34A;
   --clr-green-light:  #F0FDF4;
 
-  /* Text */
-  --clr-text:         #1A202C;
-  --clr-text-secondary: #4A5568;
-  --clr-text-muted:   #718096;
-  --clr-text-light:   #A0AEC0;
+  --clr-text:         #1E293B;
+  --clr-text-secondary: #475569;
+  --clr-text-muted:   #64748B;
+  --clr-text-light:   #94A3B8;
+
+  --header-bg:        #0D2D5E;
+  --header-text:      #FFFFFF;
+  --top-strip-bg:     #061B3B;
+  --top-strip-text:   #E2E8F0;
+}
+
+/* Palette 2: Digital India Tech (Indigo & Electric Cyan) */
+[data-theme="digital-india"] {
+  --clr-bg:           #F0F4F8;
+  --clr-bg-alt:       #E2E8F0;
+  --clr-surface:      #FFFFFF;
+  --clr-surface-2:    #F8FAFC;
+  --clr-border:       #CBD5E1;
+  --clr-border-light: #F1F5F9;
+  --clr-brand-glow:   rgba(30, 58, 138, 0.18);
+  --clr-brand-soft:   #EFF6FF;
+
+  --clr-navy:         #1E3A8A;
+  --clr-navy-light:   #2563EB;
+  --clr-navy-dark:    #172554;
+
+  --clr-primary:      #1E3A8A;
+  --clr-primary-hover:#1E40AF;
+  --clr-primary-light:#EFF6FF;
+
+  --clr-teal:         #06B6D4;
+  --clr-teal-light:   #ECFEFF;
+  --clr-teal-hover:   #0891B2;
+
+  --clr-saffron:      #2563EB;
+  --clr-saffron-light:#DBEAFE;
+  --clr-saffron-dark: #1D4ED8;
+
+  --clr-amber:        #F59E0B;
+  --clr-amber-light:  #FFFBEB;
+  --clr-amber-dark:   #D97706;
+
+  --header-bg:        #1E3A8A;
+  --header-text:      #FFFFFF;
+  --top-strip-bg:     #0F172A;
+  --top-strip-text:   #94A3B8;
+}
+
+/* Palette 3: Jan Kalyan Rural (Forest Green & Earth Saffron) */
+[data-theme="jan-kalyan"] {
+  --clr-bg:           #F4F7F4;
+  --clr-bg-alt:       #E4EBE4;
+  --clr-surface:      #FFFFFF;
+  --clr-surface-2:    #F7FAF7;
+  --clr-border:       #CCD9CC;
+  --clr-border-light: #EAF0EA;
+  --clr-brand-glow:   rgba(6, 78, 59, 0.18);
+  --clr-brand-soft:   #ECFDF5;
+
+  --clr-navy:         #064E3B;
+  --clr-navy-light:   #047857;
+  --clr-navy-dark:    #022C22;
+
+  --clr-primary:      #064E3B;
+  --clr-primary-hover:#022C22;
+  --clr-primary-light:#ECFDF5;
+
+  --clr-teal:         #059669;
+  --clr-teal-light:   #D1FAE5;
+  --clr-teal-hover:   #047857;
+
+  --clr-saffron:      #D97706;
+  --clr-saffron-light:#FEF3C7;
+  --clr-saffron-dark: #B45309;
+
+  --clr-amber:        #C2410C;
+  --clr-amber-light:  #FFEDD5;
+  --clr-amber-dark:   #9A3412;
+
+  --header-bg:        #064E3B;
+  --header-text:      #FFFFFF;
+  --top-strip-bg:     #022C22;
+  --top-strip-text:   #A7F3D0;
+}
+
+/* Palette 4: Sovereign Royal Gold (Imperial Midnight & Gold Accent) */
+[data-theme="royal-gold"] {
+  --clr-bg:           #F8F9FA;
+  --clr-bg-alt:       #ECEFF1;
+  --clr-surface:      #FFFFFF;
+  --clr-surface-2:    #F1F5F9;
+  --clr-border:       #CBD5E1;
+  --clr-border-light: #F8FAFC;
+  --clr-brand-glow:   rgba(15, 23, 42, 0.18);
+  --clr-brand-soft:   #F1F5F9;
+
+  --clr-navy:         #0F172A;
+  --clr-navy-light:   #1E293B;
+  --clr-navy-dark:    #020617;
+
+  --clr-primary:      #0F172A;
+  --clr-primary-hover:#020617;
+  --clr-primary-light:#F1F5F9;
+
+  --clr-teal:         #CA8A04;
+  --clr-teal-light:   #FEF9C3;
+  --clr-teal-hover:   #A16207;
+
+  --clr-saffron:      #D97706;
+  --clr-saffron-light:#FEF3C7;
+  --clr-saffron-dark: #B45309;
+
+  --header-bg:        #0F172A;
+  --header-text:      #FFFFFF;
+  --top-strip-bg:     #020617;
+  --top-strip-text:   #FDE047;
+}
+
+/* Palette 5: Modern Citizen Teal (Deep State Teal & Solar Amber) */
+[data-theme="modern-teal"] {
+  --clr-bg:           #F0FDFA;
+  --clr-bg-alt:       #CCFBF1;
+  --clr-surface:      #FFFFFF;
+  --clr-surface-2:    #F5FEFD;
+  --clr-border:       #99F6E4;
+  --clr-border-light: #E6FFFA;
+  --clr-brand-glow:   rgba(15, 118, 110, 0.18);
+  --clr-brand-soft:   #E6FFFA;
+
+  --clr-navy:         #0F766E;
+  --clr-navy-light:   #115E59;
+  --clr-navy-dark:    #134E4A;
+
+  --clr-primary:      #0F766E;
+  --clr-primary-hover:#115E59;
+  --clr-primary-light:#E6FFFA;
+
+  --clr-teal:         #0D9488;
+  --clr-teal-light:   #CCFBF1;
+  --clr-teal-hover:   #0F766E;
+
+  --clr-saffron:      #F59E0B;
+  --clr-saffron-light:#FEF3C7;
+  --clr-saffron-dark: #D97706;
+
+  --header-bg:        #0F766E;
+  --header-text:      #FFFFFF;
+  --top-strip-bg:     #134E4A;
+  --top-strip-text:   #99F6E4;
+}
+
+/* High Contrast Mode Override */
+[data-high-contrast="true"] {
+  --clr-bg:           #000000 !important;
+  --clr-bg-alt:       #121212 !important;
+  --clr-surface:      #1E1E1E !important;
+  --clr-surface-2:    #2A2A2A !important;
+  --clr-border:       #FFFF00 !important;
+  --clr-border-light: #444444 !important;
+  --clr-text:         #FFFFFF !important;
+  --clr-text-secondary: #E0E0E0 !important;
+  --clr-text-muted:   #CCCCCC !important;
+  --clr-navy:         #FFFF00 !important;
+  --clr-primary:      #FFFF00 !important;
+  --header-bg:        #000000 !important;
+  --header-text:      #FFFF00 !important;
+  --top-strip-bg:     #111111 !important;
+  --top-strip-text:   #FFFFFF !important;
+}
+
+/* Font Size Scaling */
+html[data-font-size="small"] { font-size: 14px; }
+html[data-font-size="normal"] { font-size: 16px; }
+html[data-font-size="large"] { font-size: 18px; }
 
   /* Typography */
   --font-family:      'Plus Jakarta Sans', system-ui, sans-serif;
@@ -478,21 +640,134 @@ small { font-size: var(--fs-sm); }
 .toggle input:checked + .toggle-slider { background: var(--clr-teal); }
 .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
 
-/* ── 9. Navigation — Public Header ──────────────────────── */
+/* ── 9. Navigation — Official Government Header & Top Strip ── */
+.gov-top-strip {
+  background: var(--top-strip-bg);
+  color: var(--top-strip-text);
+  font-size: 0.75rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.01em;
+}
+.gov-top-strip-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.gov-flag-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.7rem;
+}
+.gov-flag-dots {
+  display: inline-flex;
+  gap: 2px;
+}
+.gov-flag-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.gov-access-tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.font-scaler {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+}
+.font-scale-btn {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background var(--transition-fast);
+}
+.font-scale-btn:hover, .font-scale-btn.active {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+.contrast-toggle-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: inherit;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all var(--transition-fast);
+}
+.contrast-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Theme Swatch Picker */
+.theme-swatch-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 3px 6px;
+  border-radius: var(--radius-full);
+}
+.theme-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+}
+.theme-dot:hover {
+  transform: scale(1.2);
+}
+.theme-dot.active {
+  transform: scale(1.25);
+  box-shadow: 0 0 0 2px #FFFFFF;
+}
+.theme-dot.t-sovereign { background: linear-gradient(135deg, #0D2D5E 50%, #D97706 50%); }
+.theme-dot.t-digital { background: linear-gradient(135deg, #1E3A8A 50%, #06B6D4 50%); }
+.theme-dot.t-kalyan { background: linear-gradient(135deg, #064E3B 50%, #D97706 50%); }
+.theme-dot.t-royal { background: linear-gradient(135deg, #0F172A 50%, #CA8A04 50%); }
+.theme-dot.t-teal { background: linear-gradient(135deg, #0F766E 50%, #F59E0B 50%); }
+
+/* Main Government Header */
 .pub-nav {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--clr-border);
-  height: var(--header-h);
+  background: var(--header-bg);
+  color: var(--header-text);
+  border-bottom: 2px solid var(--clr-saffron);
+  box-shadow: var(--shadow-md);
+  transition: background var(--transition-base);
 }
 .pub-nav-inner {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 var(--space-6);
-  height: 100%;
+  padding: 0.75rem var(--space-6);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -503,37 +778,104 @@ small { font-size: var(--fs-sm); }
   gap: var(--space-3);
   font-weight: 800;
   font-size: var(--fs-lg);
-  color: var(--clr-navy);
+  color: var(--header-text);
   cursor: pointer;
 }
-.nav-logo-icon {
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, var(--clr-navy) 0%, var(--clr-primary) 100%);
-  border-radius: 10px;
+.nav-logo-emblem {
+  width: 42px;
+  height: 42px;
+  background: var(--clr-saffron);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 22px rgba(15, 52, 96, 0.18);
-  border: 1px solid rgba(255,255,255,0.12);
+  color: #000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+}
+.nav-logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.nav-logo-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--header-text);
+}
+.nav-logo-sub {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--clr-saffron-light);
+  opacity: 0.9;
 }
 .nav-links {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--space-2);
 }
 .nav-link {
-  padding: var(--space-2) var(--space-3);
+  padding: 0.5rem 0.875rem;
   border-radius: var(--radius-md);
   font-size: var(--fs-sm);
-  font-weight: 500;
-  color: var(--clr-text-secondary);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.88);
   cursor: pointer;
   transition: all var(--transition-fast);
 }
-.nav-link:hover  { color: var(--clr-navy); background: var(--clr-bg-alt); }
-.nav-link.active { color: var(--clr-primary); background: var(--clr-primary-light); }
+.nav-link:hover {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.15);
+}
+.nav-link.active {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.22);
+  border-bottom: 2px solid var(--clr-saffron);
+}
 .nav-actions { display: flex; align-items: center; gap: var(--space-3); }
+
+/* Notice Marquee Ticker Strip */
+.notice-ticker {
+  background: var(--clr-saffron-light);
+  border-bottom: 1px solid var(--clr-border);
+  color: var(--clr-navy-dark);
+  font-size: var(--fs-xs);
+  padding: 0.4rem 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.notice-ticker-badge {
+  background: var(--clr-saffron);
+  color: #000;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  margin-left: var(--space-6);
+  flex-shrink: 0;
+  letter-spacing: 0.05em;
+}
+.notice-ticker-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  white-space: nowrap;
+  animation: marquee 28s linear infinite;
+  padding-left: var(--space-4);
+  font-weight: 600;
+}
+.notice-ticker-content:hover {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
 
 .mobile-menu-btn {
   display: none;

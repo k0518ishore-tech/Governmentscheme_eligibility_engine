@@ -121,19 +121,19 @@ function renderPage() {
   const page = AppState.currentPage;
 
   // Public pages
-  if (page === 'home')         return renderHome(content);
-  if (page === 'register')     return renderRegister(content);
-  if (page === 'login')        return renderLogin(content);
+  if (page === 'home') return renderHome(content);
+  if (page === 'register') return renderRegister(content);
+  if (page === 'login') return renderLogin(content);
 
   // Admin pages
-  if (page === 'admin-login')  return renderAdminLogin(content);
+  if (page === 'admin-login') return renderAdminLogin(content);
   if (AppState.isAdmin) {
-    if (page === 'admin-dashboard')     return renderAdminDashboard(content);
-    if (page === 'scheme-management')   return renderSchemeManagement(content);
-    if (page === 'eligibility-rules')   return renderEligibilityRules(content);
+    if (page === 'admin-dashboard') return renderAdminDashboard(content);
+    if (page === 'scheme-management') return renderSchemeManagement(content);
+    if (page === 'eligibility-rules') return renderEligibilityRules(content);
     if (page === 'category-management') return renderCategoryManagement(content);
     if (page === 'department-management') return renderDepartmentManagement(content);
-    if (page === 'user-management')     return renderUserManagement(content);
+    if (page === 'user-management') return renderUserManagement(content);
     if (page === 'application-management') return renderApplicationManagement(content);
     if (page === 'recommendation-analytics') return renderRecommendationAnalytics(content);
     if (page === 'feedback-management') return renderFeedbackManagement(content);
@@ -144,16 +144,16 @@ function renderPage() {
   if (!AppState.currentUser) {
     return renderLogin(content);
   }
-  if (page === 'dashboard')       return renderDashboard(content);
-  if (page === 'profile')         return renderProfile(content);
-  if (page === 'find-schemes')    return renderFindSchemes(content);
-  if (page === 'scheme-detail')   return renderSchemeDetail(content);
-  if (page === 'eligibility')     return renderEligibility(content);
+  if (page === 'dashboard') return renderDashboard(content);
+  if (page === 'profile') return renderProfile(content);
+  if (page === 'find-schemes') return renderFindSchemes(content);
+  if (page === 'scheme-detail') return renderSchemeDetail(content);
+  if (page === 'eligibility') return renderEligibility(content);
   if (page === 'eligibility-result') return renderEligibilityResult(content);
   if (page === 'recommendations') return renderRecommendations(content);
-  if (page === 'saved')           return renderSaved(content);
-  if (page === 'applications')    return renderApplications(content);
-  if (page === 'notifications')   return renderNotifications(content);
+  if (page === 'saved') return renderSaved(content);
+  if (page === 'applications') return renderApplications(content);
+  if (page === 'notifications') return renderNotifications(content);
 }
 
 // ── Format helpers ───────────────────────────────────────────
@@ -344,29 +344,39 @@ function getRecommendationReason(scheme) {
 function schemeCardHTML(scheme, options = {}) {
   const saved = isSaved(scheme.id);
   const catColor = getCategoryColor(scheme.category);
+  const govTag = scheme.state === 'All States' ? 'Central Scheme' : `${scheme.state} State`;
+
   return `
-    <div class="scheme-card" onclick="navigate('scheme-detail', {scheme: ${scheme.id}})">
+    <div class="scheme-card" onclick="navigate('scheme-detail', {scheme: ${scheme.id}})" style="border-top:3px solid var(--clr-primary)">
       <div class="scheme-card-top">
-        <div class="scheme-card-category">
-          <span class="badge badge-${catColor}">${scheme.category}</span>
+        <div class="scheme-card-category" style="display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">
+            <span class="badge badge-${catColor}">${scheme.category}</span>
+            <span style="font-size:0.65rem;font-weight:700;background:var(--clr-saffron-light);color:var(--clr-saffron-dark);padding:2px 6px;border-radius:var(--radius-sm);text-transform:uppercase">
+              🏛️ ${govTag}
+            </span>
+          </div>
           <button class="save-btn ${saved ? 'saved' : ''}" data-id="${scheme.id}"
             title="${saved ? 'Remove from saved' : 'Save scheme'}"
             onclick="event.stopPropagation(); toggleSave(${scheme.id})">
             ${saved ? Icons.bookmarkFilled : Icons.bookmark}
           </button>
         </div>
-        <div class="scheme-card-title">${scheme.name}</div>
+        <div class="scheme-card-title" style="margin-top:var(--space-2);color:var(--clr-navy)">${scheme.name}</div>
         <div class="scheme-card-desc">${scheme.shortDesc}</div>
-        <div class="scheme-card-benefit">${Icons.tag} ${scheme.benefit}</div>
+        
+        <div class="scheme-card-benefit" style="background:var(--clr-bg-alt);padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);margin-top:var(--space-3);display:inline-flex;align-items:center;gap:0.4rem;font-weight:700;color:var(--clr-green)">
+          ${Icons.tag} <span>Benefit: ${scheme.benefit}</span>
+        </div>
       </div>
-      <div class="scheme-card-bottom">
-        <span class="text-xs text-muted">${scheme.department.replace('Ministry of ', '')}</span>
+      <div class="scheme-card-bottom" style="margin-top:var(--space-3);padding-top:var(--space-3);border-top:1px solid var(--clr-border-light)">
+        <span class="text-xs text-muted" style="font-weight:600">🏛️ ${scheme.department.replace('Ministry of ', '')}</span>
         <div class="scheme-card-actions">
           <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); navigate('eligibility', {scheme: ${scheme.id}})">
             Check Eligibility
           </button>
           <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); navigate('scheme-detail', {scheme: ${scheme.id}})">
-            View
+            View Details
           </button>
         </div>
       </div>
@@ -408,14 +418,14 @@ function appHeaderHTML() {
 function citizenSidebarHTML(activePage) {
   const user = AppState.currentUser;
   const navItems = [
-    { id: 'dashboard',       label: 'Dashboard',       icon: Icons.home },
-    { id: 'find-schemes',    label: 'Find Schemes',     icon: Icons.schemes },
-    { id: 'eligibility',     label: 'Check Eligibility',icon: Icons.check },
-    { id: 'recommendations', label: 'Recommendations',  icon: Icons.spark },
-    { id: 'saved',           label: 'Saved Schemes',    icon: Icons.bookmark },
-    { id: 'applications',    label: 'My Applications',  icon: Icons.folder },
-    { id: 'notifications',   label: 'Notifications',    icon: Icons.bell, badge: AppState.notificationCount },
-    { id: 'profile',         label: 'My Profile',       icon: Icons.user },
+    { id: 'dashboard', label: 'Dashboard', icon: Icons.home },
+    { id: 'find-schemes', label: 'Find Schemes', icon: Icons.schemes },
+    { id: 'eligibility', label: 'Check Eligibility', icon: Icons.check },
+    { id: 'recommendations', label: 'Recommendations', icon: Icons.spark },
+    { id: 'saved', label: 'Saved Schemes', icon: Icons.bookmark },
+    { id: 'applications', label: 'My Applications', icon: Icons.folder },
+    { id: 'notifications', label: 'Notifications', icon: Icons.bell, badge: AppState.notificationCount },
+    { id: 'profile', label: 'My Profile', icon: Icons.user },
   ];
 
   return `
@@ -513,7 +523,7 @@ function adminSidebarHTML(activePage) {
 // ── App layout wrapper ───────────────────────────────────────
 function appLayout(page, contentHTML, isAdmin = false) {
   const sidebar = isAdmin ? adminSidebarHTML(page) : citizenSidebarHTML(page);
-  const header  = isAdmin ? adminHeaderHTML() : appHeaderHTML();
+  const header = isAdmin ? adminHeaderHTML() : appHeaderHTML();
   return `
     <div class="app-layout">
       ${sidebar}
@@ -569,27 +579,124 @@ function paginationHTML(total, current, perPage, onPageClick) {
   return `<div class="flex items-center gap-2 justify-center mt-6">${pages}</div>`;
 }
 
+// ── Theme & Accessibility Management ───────────────────────
+function setTheme(themeName) {
+  document.body.setAttribute('data-theme', themeName);
+  localStorage.setItem('schemeguide_theme', themeName);
+  updateThemeSwatches(themeName);
+}
+
+function updateThemeSwatches(activeTheme) {
+  document.querySelectorAll('.theme-dot').forEach(el => {
+    if (el.dataset.themeName === activeTheme) {
+      el.classList.add('active');
+    } else {
+      el.classList.remove('active');
+    }
+  });
+}
+
+function setFontSize(size) {
+  document.documentElement.setAttribute('data-font-size', size);
+  localStorage.setItem('schemeguide_fontsize', size);
+  document.querySelectorAll('.font-scale-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.size === size);
+  });
+}
+
+function toggleHighContrast() {
+  const current = document.body.getAttribute('data-high-contrast') === 'true';
+  const next = !current;
+  document.body.setAttribute('data-high-contrast', next ? 'true' : 'false');
+  localStorage.setItem('schemeguide_highcontrast', next ? 'true' : 'false');
+  showToast(next ? 'High Contrast Mode Enabled' : 'Standard Contrast Mode', '', 'info');
+}
+
 // ── Public nav ───────────────────────────────────────────────
 function pubNavHTML() {
+  const activePage = AppState.currentPage;
+  const currentTheme = document.body.getAttribute('data-theme') || 'sovereign';
+  const currentFontSize = document.documentElement.getAttribute('data-font-size') || 'normal';
+
   return `
+    <!-- Top Utility Strip -->
+    <div class="gov-top-strip">
+      <div class="gov-top-strip-inner">
+        <div class="gov-flag-tag">
+          <span class="gov-flag-dots">
+            <span style="background:#FF9933"></span>
+            <span style="background:#FFFFFF"></span>
+            <span style="background:#128807"></span>
+          </span>
+          National Welfare Portal &bull; Government Scheme Engine
+        </div>
+        <div class="gov-access-tools">
+          <span style="display:inline-flex;align-items:center;gap:4px;font-size:0.7rem;">
+            📞 Helpline: <strong>1800-111-777</strong> (Toll Free)
+          </span>
+          <div class="theme-swatch-picker" title="Switch Theme Palette">
+            <span class="theme-dot t-sovereign ${currentTheme === 'sovereign' ? 'active' : ''}" data-theme-name="sovereign" onclick="setTheme('sovereign')" title="Sovereign National (Navy)"></span>
+            <span class="theme-dot t-digital ${currentTheme === 'digital-india' ? 'active' : ''}" data-theme-name="digital-india" onclick="setTheme('digital-india')" title="Digital India Tech (Blue)"></span>
+            <span class="theme-dot t-kalyan ${currentTheme === 'jan-kalyan' ? 'active' : ''}" data-theme-name="jan-kalyan" onclick="setTheme('jan-kalyan')" title="Jan Kalyan Rural (Forest)"></span>
+            <span class="theme-dot t-royal ${currentTheme === 'royal-gold' ? 'active' : ''}" data-theme-name="royal-gold" onclick="setTheme('royal-gold')" title="Royal Gold (Slate)"></span>
+            <span class="theme-dot t-teal ${currentTheme === 'modern-teal' ? 'active' : ''}" data-theme-name="modern-teal" onclick="setTheme('modern-teal')" title="Modern Citizen Teal"></span>
+          </div>
+          <div class="font-scaler">
+            <button class="font-scale-btn ${currentFontSize === 'small' ? 'active' : ''}" data-size="small" onclick="setFontSize('small')">A-</button>
+            <button class="font-scale-btn ${currentFontSize === 'normal' ? 'active' : ''}" data-size="normal" onclick="setFontSize('normal')">A</button>
+            <button class="font-scale-btn ${currentFontSize === 'large' ? 'active' : ''}" data-size="large" onclick="setFontSize('large')">A+</button>
+          </div>
+          <button class="contrast-toggle-btn" onclick="toggleHighContrast()">
+            👁️ High Contrast
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Navigation Bar -->
     <nav class="pub-nav">
       <div class="pub-nav-inner">
         <div class="nav-logo" onclick="navigate('home')">
-          <div class="nav-logo-icon">${Icons.logo}</div>
-          SchemeGuide
+          <div class="nav-logo-emblem">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <div class="nav-logo-text">
+            <span class="nav-logo-title">SchemeGuide</span>
+            <span class="nav-logo-sub">Public Eligibility Portal</span>
+          </div>
         </div>
         <div class="nav-links">
-          <span class="nav-link" onclick="navigate('find-schemes')">Find Schemes</span>
-          <span class="nav-link" onclick="navigate('eligibility')">Check Eligibility</span>
-          <span class="nav-link" onclick="navigate('home')">About</span>
+          <span class="nav-link ${activePage === 'home' ? 'active' : ''}" onclick="navigate('home')">Home</span>
+          <span class="nav-link ${activePage === 'find-schemes' ? 'active' : ''}" onclick="navigate('find-schemes')">Find Schemes</span>
+          <span class="nav-link ${activePage === 'eligibility' ? 'active' : ''}" onclick="navigate('eligibility')">Check Eligibility</span>
+          <span class="nav-link ${activePage === 'recommendations' ? 'active' : ''}" onclick="navigate('recommendations')">Recommended</span>
         </div>
         <div class="nav-actions">
           <button class="mobile-menu-btn" id="mobile-menu-btn">${Icons.menu}</button>
-          <button class="btn btn-ghost btn-sm" onclick="navigate('login')">Sign In</button>
-          <button class="btn btn-primary btn-sm" onclick="navigate('register')">Get Started</button>
+          ${AppState.currentUser ? `
+            <button class="btn btn-sm btn-ghost" onclick="navigate('dashboard')" style="color:#fff">
+              ${Icons.user} Dashboard
+            </button>
+          ` : `
+            <button class="btn btn-ghost btn-sm" onclick="navigate('login')" style="color:#fff">Sign In</button>
+            <button class="btn btn-sm" onclick="navigate('register')" style="background:var(--clr-saffron);color:#000;font-weight:700">Check My Schemes</button>
+          `}
         </div>
       </div>
     </nav>
+
+    <!-- Notice Ticker Ribbon -->
+    <div class="notice-ticker">
+      <span class="notice-ticker-badge">LATEST UPDATES</span>
+      <div class="notice-ticker-content">
+        <span>📢 PM Kisan Samman Nidhi 17th Installment Status check is live &bull;</span>
+        <span>🎓 AICTE Pragati Scholarship for Girls applications open for FY 2024-25 &bull;</span>
+        <span>🏥 Ayushman Bharat PM-JAY cards now available at all Ayushman Arogya Mandirs &bull;</span>
+        <span>💼 Stand-Up India Scheme extended to support women entrepreneurs &bull;</span>
+      </div>
+    </div>
   `;
 }
 
