@@ -690,11 +690,13 @@ function pubNavHTML() {
     <!-- Notice Ticker Ribbon -->
     <div class="notice-ticker">
       <span class="notice-ticker-badge">LATEST UPDATES</span>
-      <div class="notice-ticker-content">
-        <span>📢 PM Kisan Samman Nidhi 17th Installment Status check is live &bull;</span>
-        <span>🎓 AICTE Pragati Scholarship for Girls applications open for FY 2024-25 &bull;</span>
-        <span>🏥 Ayushman Bharat PM-JAY cards now available at all Ayushman Arogya Mandirs &bull;</span>
-        <span>💼 Stand-Up India Scheme extended to support women entrepreneurs &bull;</span>
+      <div class="notice-ticker-wrap">
+        <div class="notice-ticker-content">
+          <span>📢 PM Kisan Samman Nidhi 17th Installment Status check is live &bull;</span>
+          <span>🎓 AICTE Pragati Scholarship for Girls applications open for FY 2024-25 &bull;</span>
+          <span>🏥 Ayushman Bharat PM-JAY cards now available at all Ayushman Arogya Mandirs &bull;</span>
+          <span>💼 Stand-Up India Scheme extended to support women entrepreneurs &bull;</span>
+        </div>
       </div>
     </div>
   `;

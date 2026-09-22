@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Re-animate after page changes
 const origRenderPage = renderPage;
-window.renderPage = function() {
+window.renderPage = function () {
   origRenderPage();
   setTimeout(animateProgressBars, 200);
   setTimeout(animateChartBars, 300);
@@ -59,7 +59,7 @@ function animateChartBars() {
 
 // Override renderPage to update page title
 const _renderPage = renderPage;
-window.renderPage = function() {
+window.renderPage = function () {
   _renderPage();
 
   // Update document title

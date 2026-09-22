@@ -9,80 +9,79 @@ function renderHome(container) {
     ${pubNavHTML()}
     <main>
       <!-- Official Government Hero Banner -->
-      <section class="hero" style="background:linear-gradient(180deg, var(--clr-bg-alt) 0%, var(--clr-bg) 100%);padding:var(--space-12) 0 var(--space-8)">
-        <div class="container">
-          <div class="hero-content" style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:var(--space-8);align-items:center">
-            <div class="hero-text animate-up">
-              <div class="hero-eyebrow" style="background:var(--clr-surface);border:1px solid var(--clr-border);padding:0.4rem 0.875rem;border-radius:var(--radius-full);display:inline-flex;align-items:center;gap:0.5rem;font-weight:700;font-size:var(--fs-xs);color:var(--clr-navy)">
-                <span>🏛️ Official Public Welfare Engine</span> &bull; <span>Verified Information</span>
-              </div>
-              <h1 style="margin-top:var(--space-3);font-size:2.8rem;line-height:1.2;color:var(--clr-navy)">
-                Discover & Check Eligibility for <span style="color:var(--clr-saffron-dark)">Government Welfare Schemes</span>
-              </h1>
-              <p class="hero-subtitle" style="font-size:var(--fs-md);color:var(--clr-text-secondary);margin:var(--space-4) 0 var(--space-6)">
-                Single window portal to check eligibility for central & state schemes across education, healthcare, agriculture, housing, and financial assistance.
-              </p>
+      <section class="hero" style="background:linear-gradient(180deg, var(--clr-bg-alt) 0%, var(--clr-bg) 100%);">
+        <div class="hero-content">
+          <div class="hero-text animate-up">
+            <div class="hero-eyebrow" style="background:var(--clr-surface);border:1px solid var(--clr-border);padding:0.4rem 0.875rem;border-radius:var(--radius-full);display:inline-flex;align-items:center;gap:0.5rem;font-weight:700;font-size:var(--fs-xs);color:var(--clr-navy)">
+              <span>🏛️ Official Public Welfare Engine</span> &bull; <span>Verified Information</span>
+            </div>
+            <h1 style="margin-top:var(--space-3);font-size:clamp(2rem, 3.5vw, 2.8rem);line-height:1.2;color:var(--clr-navy)">
+              Discover & Check Eligibility for <span style="color:var(--clr-saffron-dark)">Government Welfare Schemes</span>
+            </h1>
+            <p class="hero-subtitle" style="font-size:var(--fs-md);color:var(--clr-text-secondary);margin:var(--space-4) 0 var(--space-6)">
+              Single window portal to check eligibility for central & state schemes across education, healthcare, agriculture, housing, and financial assistance.
+            </p>
 
-              <!-- Central Hero Search Box -->
-              <div style="background:var(--clr-surface);padding:0.75rem;border-radius:var(--radius-lg);box-shadow:var(--shadow-soft);border:1.5px solid var(--clr-border);display:flex;gap:0.5rem;align-items:center;margin-bottom:var(--space-6)">
-                <div style="color:var(--clr-text-muted);padding-left:0.5rem">${Icons.search}</div>
-                <input type="text" id="hero-search-input" placeholder="Search by scheme name, category (e.g. Student, Farmer, Healthcare)..." 
-                  style="flex:1;border:none;outline:none;font-size:var(--fs-base);background:transparent"
-                  onkeydown="if(event.key==='Enter'){ AppState.searchQuery=this.value; navigate('find-schemes'); }" />
-                <button class="btn btn-primary" onclick="const val=document.getElementById('hero-search-input').value; AppState.searchQuery=val; navigate('find-schemes');">
-                  Search Schemes
-                </button>
-              </div>
-
-              <!-- Quick CTAs & Pills -->
-              <div class="flex items-center gap-3 flex-wrap">
-                <button class="btn btn-primary btn-lg" onclick="navigate('eligibility')" style="background:var(--clr-navy);color:#fff">
-                  ⚡ Check My Eligibility Wizard
-                </button>
-                <button class="btn btn-outline-navy btn-lg" onclick="navigate('find-schemes')">
-                  Browse All 100+ Schemes ${Icons.arrowRight}
-                </button>
-              </div>
-
-              <!-- Quick Category Tags -->
-              <div style="margin-top:var(--space-5);display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap">
-                <span style="font-size:var(--fs-xs);font-weight:700;color:var(--clr-text-muted);text-transform:uppercase;letter-spacing:0.05em">Popular Searches:</span>
-                ${['PM Kisan', 'Scholarships', 'Ayushman Bharat', 'Housing', 'Women Schemes'].map(tag => `
-                  <span style="background:var(--clr-surface);border:1px solid var(--clr-border);font-size:var(--fs-xs);font-weight:600;padding:3px 10px;border-radius:var(--radius-full);cursor:pointer;color:var(--clr-navy)"
-                    onclick="AppState.searchQuery='${tag}'; navigate('find-schemes')">
-                    ${tag}
-                  </span>
-                `).join('')}
-              </div>
+            <!-- Central Hero Search Box -->
+            <div style="background:var(--clr-surface);padding:0.6rem 0.75rem;border-radius:var(--radius-lg);box-shadow:var(--shadow-soft);border:1.5px solid var(--clr-border);display:flex;gap:0.5rem;align-items:center;margin-bottom:var(--space-5)">
+              <div style="color:var(--clr-text-muted);padding-left:0.5rem;display:flex;align-items:center">${Icons.search}</div>
+              <input type="text" id="hero-search-input" placeholder="Search by scheme name, category (e.g. Student, Farmer, Healthcare)..." 
+                style="flex:1;border:none;outline:none;font-size:var(--fs-base);background:transparent"
+                onkeydown="if(event.key==='Enter'){ AppState.searchQuery=this.value; navigate('find-schemes'); }" />
+              <button class="btn btn-primary" onclick="const val=document.getElementById('hero-search-input').value; AppState.searchQuery=val; navigate('find-schemes');">
+                Search Schemes
+              </button>
             </div>
 
-            <!-- Hero Graphics Card -->
-            <div class="hero-illustration">
-              ${heroIllustrationSVG()}
+            <!-- Quick CTAs & Pills -->
+            <div class="flex items-center gap-3 flex-wrap">
+              <button class="btn btn-primary btn-lg" onclick="navigate('eligibility')" style="background:var(--clr-navy);color:#fff">
+                ⚡ Check My Eligibility Wizard
+              </button>
+              <button class="btn btn-outline-navy btn-lg" onclick="navigate('find-schemes')">
+                Browse All 100+ Schemes ${Icons.arrowRight}
+              </button>
             </div>
+
+            <!-- Quick Category Tags -->
+            <div style="margin-top:var(--space-5);display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap">
+              <span style="font-size:var(--fs-xs);font-weight:700;color:var(--clr-text-muted);text-transform:uppercase;letter-spacing:0.05em">Popular Searches:</span>
+              ${['PM Kisan', 'Scholarships', 'Ayushman Bharat', 'Housing', 'Women Schemes'].map(tag => `
+                <span style="background:var(--clr-surface);border:1px solid var(--clr-border);font-size:var(--fs-xs);font-weight:600;padding:4px 12px;border-radius:var(--radius-full);cursor:pointer;color:var(--clr-navy);transition:all var(--transition-fast)"
+                  onmouseover="this.style.borderColor='var(--clr-primary)'" onmouseout="this.style.borderColor='var(--clr-border)'"
+                  onclick="AppState.searchQuery='${tag}'; navigate('find-schemes')">
+                  ${tag}
+                </span>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Hero Graphics Card -->
+          <div class="hero-illustration">
+            ${heroIllustrationSVG()}
           </div>
         </div>
       </section>
 
       <!-- Key Portal Stats Ribbon -->
-      <section style="background:var(--clr-navy);color:#fff;padding:var(--space-6) 0;border-bottom:3px solid var(--clr-saffron)">
+      <section style="background:var(--clr-navy);color:#fff;padding:var(--space-8) 0;border-bottom:3px solid var(--clr-saffron)">
         <div class="container">
-          <div class="grid grid-4 text-center" style="gap:var(--space-4)">
+          <div class="grid grid-4 text-center" style="gap:var(--space-6)">
             <div>
               <div style="font-size:2.2rem;font-weight:800;color:var(--clr-saffron)">100+</div>
-              <div style="font-size:var(--fs-xs);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.8)">Active Central & State Schemes</div>
+              <div style="font-size:var(--fs-xs);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.85);margin-top:4px">Active Central & State Schemes</div>
             </div>
             <div>
               <div style="font-size:2.2rem;font-weight:800;color:var(--clr-saffron)">9</div>
-              <div style="font-size:var(--fs-xs);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.8)">Major Categories</div>
+              <div style="font-size:var(--fs-xs);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.85);margin-top:4px">Major Categories</div>
             </div>
             <div>
               <div style="font-size:2.2rem;font-weight:800;color:var(--clr-saffron)">100%</div>
-              <div style="font-size:var(--fs-xs);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.8)">Verified Official Criteria</div>
+              <div style="font-size:var(--fs-xs);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.85);margin-top:4px">Verified Official Criteria</div>
             </div>
             <div>
               <div style="font-size:2.2rem;font-weight:800;color:var(--clr-saffron)">50,000+</div>
-              <div style="font-size:var(--fs-xs);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.8)">Citizens Served</div>
+              <div style="font-size:var(--fs-xs);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.85);margin-top:4px">Citizens Served</div>
             </div>
           </div>
         </div>
