@@ -107,10 +107,11 @@ function renderRegister(container) {
   `;
 }
 
-function handleRegister(e) {
+async function handleRegister(e) {
   e.preventDefault();
   const name = document.getElementById('reg-name').value.trim();
   const email = document.getElementById('reg-email').value.trim();
+  const phone = document.getElementById('reg-phone').value.trim();
   const pw = document.getElementById('reg-pw').value;
   const cpw = document.getElementById('reg-cpw').value;
   const terms = document.getElementById('reg-terms').checked;
@@ -125,96 +126,22 @@ function handleRegister(e) {
   btn.disabled = true;
   btn.innerHTML = `<span class="loading-spinner" style="width:18px;height:18px;border-width:2px"></span> Creating account...`;
 
-  setTimeout(() => {
-    AppState.currentUser = {
-      id: 99,
-      name,
-      email,
-      phone: document.getElementById('reg-phone').value,
-      state: '',
-      age: '',
-      gender: '',
-      income: '',
-      education: '',
-      occupation: '',
-      community: 'General',
-      district: '',
-      area: 'Urban',
-      disability: false,
-    };
+  try {
+    const res = await AuthAPI.register({ name, email, password: pw, phone });
+    setToken(res.data.token);
+    AppState.currentUser = res.data.user;
+    AppState.isAdmin = res.data.user.role === 'admin';
     showToast('Account created!', `Welcome to SchemeGuide, ${name.split(' ')[0]}!`, 'success');
     navigate('dashboard');
-  }, 1200);
+  } catch (err) {
+    showToast('Registration failed', err.message || 'Error creating account', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `Create Account ${Icons.arrowRight}`;
+  }
 }
 
-// ── Login ────────────────────────────────────────────────────
-function renderLogin(container) {
-  container.innerHTML = `
-    <div class="auth-layout">
-      <div class="auth-panel">
-        <div style="position:relative;z-index:1;max-width:400px;text-align:center">
-          ${authIllustrationSVG()}
-          <h2 style="color:white;font-size:var(--fs-2xl);margin-bottom:var(--space-4);margin-top:var(--space-6)">
-            "Let's find the support that's right for you."
-          </h2>
-          <p style="color:rgba(255,255,255,0.65);font-size:var(--fs-sm)">
-            SchemeGuide helps citizens like you discover government programmes you may not even know about.
-          </p>
-        </div>
-      </div>
-      <div class="auth-form-wrap">
-        <div class="auth-form-card">
-          <div class="nav-logo" style="margin-bottom:var(--space-6);cursor:pointer" onclick="navigate('home')">
-            <div class="nav-logo-icon">${Icons.logo}</div>
-            SchemeGuide
-          </div>
-          <h1 class="auth-title">Welcome back</h1>
-          <p class="auth-subtitle">Sign in to check your eligibility and view your saved schemes.</p>
-
-          <form onsubmit="handleLogin(event)" novalidate style="display:flex;flex-direction:column;gap:var(--space-4)">
-            <div class="form-group">
-              <label class="form-label" for="login-email">Email Address</label>
-              <div class="input-icon-wrap">
-                <span class="icon-left">${Icons.mail}</span>
-                <input class="input" type="email" id="login-email" placeholder="you@example.com" value="riya@example.com"/>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="login-pw" style="display:flex;justify-content:space-between;align-items:center">
-                <span>Password</span>
-                <span style="color:var(--clr-primary);font-size:var(--fs-xs);font-weight:600;cursor:pointer">Forgot Password?</span>
-              </label>
-              <div class="input-icon-wrap">
-                <span class="icon-left">${Icons.lock}</span>
-                <input class="input" type="password" id="login-pw" placeholder="Enter your password" value="password123"/>
-              </div>
-            </div>
-            <button type="submit" class="btn btn-primary btn-lg btn-full" id="login-btn">
-              Sign In ${Icons.arrowRight}
-            </button>
-          </form>
-
-          <div class="auth-divider"><span>quick access</span></div>
-          <div class="flex gap-3">
-            <button class="btn btn-outline-navy btn-sm btn-full" onclick="quickLogin('citizen')">
-              👤 Demo Citizen
-            </button>
-            <button class="btn btn-outline-navy btn-sm btn-full" onclick="quickLogin('admin')">
-              🛡️ Admin Demo
-            </button>
-          </div>
-
-          <p style="text-align:center;margin-top:var(--space-6);font-size:var(--fs-sm);color:var(--clr-text-muted)">
-            New to SchemeGuide?
-            <span onclick="navigate('register')" style="color:var(--clr-primary);font-weight:600;cursor:pointer">Create Account</span>
-          </p>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function handleLogin(e) {
+async function handleLogin(e) {
   e.preventDefault();
   const email = document.getElementById('login-email').value.trim();
   const pw = document.getElementById('login-pw').value;
@@ -226,24 +153,48 @@ function handleLogin(e) {
   btn.disabled = true;
   btn.innerHTML = `<span class="loading-spinner" style="width:18px;height:18px;border-width:2px"></span> Signing in...`;
 
-  setTimeout(() => {
-    AppState.currentUser = USERS[0];
-    showToast('Welcome back!', `Good to see you, ${USERS[0].name.split(' ')[0]}!`, 'success');
-    navigate('dashboard');
-  }, 1000);
+  try {
+    const res = await AuthAPI.login({ email, password: pw });
+    setToken(res.data.token);
+    AppState.currentUser = res.data.user;
+    AppState.isAdmin = res.data.user.role === 'admin';
+    showToast('Welcome back!', `Good to see you, ${(res.data.user.name || 'User').split(' ')[0]}!`, 'success');
+    if (AppState.isAdmin) {
+      navigate('admin-dashboard');
+    } else {
+      navigate('dashboard');
+    }
+  } catch (err) {
+    showToast('Login failed', err.message || 'Invalid email or password', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `Sign In ${Icons.arrowRight}`;
+  }
 }
 
-function quickLogin(role) {
+async function quickLogin(role) {
   if (role === 'admin') {
-    AppState.isAdmin = true;
-    AppState.currentUser = { name: 'Admin', email: 'admin@schemeguide.in' };
-    showToast('Admin access granted', 'Welcome to the administration panel.', 'success');
-    navigate('admin-dashboard');
+    try {
+      const res = await AuthAPI.login({ email: 'admin@schemeguide.in', password: 'admin123' });
+      setToken(res.data.token);
+      AppState.currentUser = res.data.user;
+      AppState.isAdmin = true;
+      showToast('Admin access granted', 'Welcome to administration panel.', 'success');
+      navigate('admin-dashboard');
+    } catch (err) {
+      showToast('Admin login failed', err.message || 'Could not log in as admin', 'error');
+    }
   } else {
-    AppState.isAdmin = false;
-    AppState.currentUser = USERS[0];
-    showToast('Welcome back!', `Signed in as ${USERS[0].name}`, 'success');
-    navigate('dashboard');
+    try {
+      const res = await AuthAPI.login({ email: 'riya@example.com', password: 'password123' });
+      setToken(res.data.token);
+      AppState.currentUser = res.data.user;
+      AppState.isAdmin = false;
+      showToast('Welcome back!', `Signed in as ${res.data.user.name}`, 'success');
+      navigate('dashboard');
+    } catch (err) {
+      showToast('Login failed', err.message || 'Could not log in as demo user', 'error');
+    }
   }
 }
 

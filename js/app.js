@@ -2,7 +2,22 @@
 // SchemeGuide — Main App Router & Initialization
 // ============================================================
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  // Check for saved JWT token
+  if (getToken()) {
+    try {
+      const res = await AuthAPI.getMe();
+      if (res.data && res.data.user) {
+        AppState.currentUser = res.data.user;
+        AppState.isAdmin = res.data.user.role === 'admin';
+        console.log('[SchemeGuide] Restored session for:', res.data.user.email);
+      }
+    } catch (err) {
+      console.warn('[SchemeGuide] Failed to restore session from token');
+      removeToken();
+    }
+  }
+
   // Initialize app
   navigate('home');
 

@@ -58,16 +58,30 @@ function renderAdminLogin(container) {
   `;
 }
 
-function handleAdminLogin(e) {
+async function handleAdminLogin(e) {
   e.preventDefault();
+  const email = document.getElementById('admin-email').value.trim();
+  const pw = document.getElementById('admin-pw').value;
+
   const btn = document.getElementById('admin-login-btn');
   btn.disabled = true;
   btn.innerHTML = `<span class="loading-spinner" style="width:16px;height:16px;border-width:2px"></span> Verifying credentials...`;
 
-  setTimeout(() => {
+  try {
+    const res = await AuthAPI.login({ email, password: pw });
+    if (res.data.user.role !== 'admin') {
+      showToast('Access denied', 'Account is not an administrator', 'error');
+      return;
+    }
+    setToken(res.data.token);
+    AppState.currentUser = res.data.user;
     AppState.isAdmin = true;
-    AppState.currentUser = { name: 'Admin', email: 'admin@schemeguide.in' };
     showToast('Admin access granted', 'Welcome to SchemeGuide Administration.', 'success');
     navigate('admin-dashboard');
-  }, 1200);
+  } catch (err) {
+    showToast('Admin login failed', err.message || 'Invalid admin credentials', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `${Icons.lock} Sign In as Administrator`;
+  }
 }

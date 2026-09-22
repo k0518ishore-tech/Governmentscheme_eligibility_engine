@@ -192,15 +192,24 @@ function isSaved(schemeId) {
   return AppState.savedSchemes.includes(schemeId);
 }
 
-function toggleSave(schemeId) {
+async function toggleSave(schemeId) {
   const idx = AppState.savedSchemes.indexOf(schemeId);
-  if (idx === -1) {
+  const isCurrentlySaved = idx !== -1;
+
+  if (!isCurrentlySaved) {
     AppState.savedSchemes.push(schemeId);
     showToast('Scheme Saved', 'You can find it in Saved Schemes.', 'success');
+    if (AppState.currentUser && getToken()) {
+      try { await UserAPI.saveScheme(schemeId); } catch (e) { console.warn('Failed to save to backend', e); }
+    }
   } else {
     AppState.savedSchemes.splice(idx, 1);
     showToast('Removed', 'Scheme removed from saved list.', 'info');
+    if (AppState.currentUser && getToken()) {
+      try { await UserAPI.unsaveScheme(schemeId); } catch (e) { console.warn('Failed to unsave from backend', e); }
+    }
   }
+
   // Re-render save buttons without full page refresh
   document.querySelectorAll(`.save-btn[data-id="${schemeId}"]`).forEach(btn => {
     const saved = isSaved(schemeId);

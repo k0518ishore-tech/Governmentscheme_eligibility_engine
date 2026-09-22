@@ -2,9 +2,26 @@
 // SchemeGuide — Application History Page
 // ============================================================
 
-function renderApplications(container) {
-  const user = AppState.currentUser;
-  const apps = APPLICATIONS.filter(a => a.userId === user.id);
+async function renderApplications(container) {
+  let apps = [];
+  try {
+    const res = await ApplicationAPI.getAll();
+    if (res.data && res.data.applications) {
+      apps = res.data.applications.map(a => ({
+        id: a._id,
+        schemeId: a.schemeId?._id || a.schemeId,
+        schemeName: a.schemeName || a.schemeId?.name || 'Government Scheme',
+        category: a.category || a.schemeId?.category || 'General',
+        status: a.status || 'Submitted',
+        appliedDate: a.createdAt,
+        lastUpdated: a.updatedAt,
+      }));
+    }
+  } catch (err) {
+    console.warn('[SchemeGuide] Backend application fetch failed, using mock fallbacks if any:', err);
+    const user = AppState.currentUser;
+    apps = user ? APPLICATIONS.filter(a => a.userId === user.id) : [];
+  }
 
   container.innerHTML = appLayout('applications', `
     <div class="page-header">
@@ -52,15 +69,6 @@ function renderApplications(container) {
       <div class="card-flat">
         <div style="padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--clr-border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--space-4)">
           <h4 style="color:var(--clr-navy)">All Applications</h4>
-          <div class="flex gap-3">
-            <select class="select" style="width:auto;font-size:var(--fs-xs)" id="app-filter">
-              <option value="">All Status</option>
-              <option>Submitted</option>
-              <option>Under Review</option>
-              <option>Approved</option>
-              <option>Rejected</option>
-            </select>
-          </div>
         </div>
         <div class="table-wrap" style="border:none;border-radius:0">
           <table>
@@ -92,10 +100,7 @@ function renderApplications(container) {
                   <td style="color:var(--clr-text-secondary)">${formatDate(app.lastUpdated)}</td>
                   <td>
                     <div class="table-actions">
-                      <button class="btn btn-ghost btn-sm" onclick="viewApplicationDetail('${app.id}')" title="View Details">
-                        ${Icons.eye}
-                      </button>
-                      <button class="btn btn-ghost btn-sm" onclick="navigate('scheme-detail', {scheme:${app.schemeId}})" title="View Scheme">
+                      <button class="btn btn-ghost btn-sm" onclick="navigate('scheme-detail', {scheme:'${app.schemeId}'})" title="View Scheme">
                         ${Icons.externalLink}
                       </button>
                     </div>

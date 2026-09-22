@@ -237,7 +237,7 @@ function updateEligUI() {
   if (prev) prev.style.visibility = eligStep === 1 ? 'hidden' : 'visible';
 }
 
-function runEligibilityCheck() {
+async function runEligibilityCheck() {
   saveCurrentStep();
   const btn = document.getElementById('check-btn');
   if (btn) {
@@ -245,19 +245,53 @@ function runEligibilityCheck() {
     btn.innerHTML = `<span class="loading-spinner" style="width:16px;height:16px;border-width:2px"></span> Checking your details against scheme requirements...`;
   }
 
-  // Update user data
-  AppState.currentUser = { ...AppState.currentUser, ...eligData };
-  AppState.eligibilityData = eligData;
+  // Map frontend field names to backend expected keys
+  const profilePayload = {
+    age: eligData.age,
+    gender: eligData.gender,
+    annualIncome: eligData.income,
+    education: eligData.education,
+    occupation: eligData.occupation,
+    category: eligData.community,
+    disabilityStatus: eligData.disability,
+    state: eligData.state,
+    district: eligData.district,
+    ruralUrban: eligData.area,
+  };
 
-  setTimeout(() => {
-    // Calculate results for all schemes
-    const results = SCHEMES.map(s => ({
-      scheme: s,
-      result: checkEligibility(s, eligData),
+  try {
+    const res = await EligibilityAPI.check(profilePayload);
+    // Backend returns results array
+    AppState.eligibilityData = eligData;
+    AppState.backendEligibilityResult = res.data;
+    // Map backend results to frontend structures
+    AppState.eligibilityResult = (res.data.results || []).map(r => ({
+      scheme: {
+        id: r.schemeId,
+        _id: r.schemeId,
+        name: r.schemeName,
+        category: r.category,
+      },
+      result: {
+        eligible: r.status === 'ELIGIBLE' || r.status === 'PARTIALLY_ELIGIBLE',
+        status: r.status,
+        score: r.score,
+        results: (r.conditionResults || []).map(cr => ({
+          criterion: cr.condition,
+          yours: cr.userValue,
+          required: cr.requiredValue,
+          met: cr.status === 'passed',
+        }))
+      }
     }));
-    AppState.eligibilityResult = results;
     navigate('eligibility-result');
-  }, 2000);
+  } catch (err) {
+    showToast('Eligibility check failed', err.message || 'Error connecting to eligibility engine', 'error');
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = `${Icons.check} Check Eligibility`;
+    }
+  }
 }
 
 // ── Eligibility Result ────────────────────────────────────────

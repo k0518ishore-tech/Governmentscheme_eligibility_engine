@@ -6,8 +6,49 @@ let schemesPage = 1;
 let schemesPerPage = 6;
 let filteredSchemes = [...SCHEMES];
 
-function renderFindSchemes(container) {
-  filteredSchemes = applyFilters();
+async function fetchBackendSchemes() {
+  try {
+    const query = {
+      search: AppState.searchQuery || '',
+      category: AppState.filters.category || '',
+      state: AppState.filters.state || '',
+      department: AppState.filters.department || '',
+      sort: document.getElementById('sort-select')?.value || 'relevant',
+    };
+    const res = await SchemeAPI.getAll(query);
+    if (res.data && res.data.schemes) {
+      // Map MongoDB backend schemes to frontend scheme format
+      return res.data.schemes.map(s => ({
+        id: s._id,
+        _id: s._id,
+        name: s.name,
+        shortDesc: s.shortDescription || s.shortDesc,
+        description: s.description,
+        category: s.category,
+        department: s.department,
+        state: Array.isArray(s.state) ? s.state[0] : s.state,
+        benefit: s.benefit,
+        benefitDetail: s.benefitDetail,
+        status: s.status,
+        views: s.views || 0,
+        tags: s.tags || [],
+        eligibility: s.eligibilityRules || {},
+        criteria: s.criteria || [],
+        documents: s.documentsRequired || [],
+        applicationProcess: s.applicationProcess || [],
+        applicationURL: s.applicationUrl,
+        popular: s.popular || false,
+        recommended: s.recommended || false,
+      }));
+    }
+  } catch (err) {
+    console.warn('[SchemeGuide] Backend fetch failed, falling back to local schemes:', err);
+  }
+  return [...SCHEMES];
+}
+
+async function renderFindSchemes(container) {
+  filteredSchemes = await fetchBackendSchemes();
 
   container.innerHTML = appLayout('find-schemes', `
     <div class="page-header">
@@ -22,7 +63,7 @@ function renderFindSchemes(container) {
         value="${AppState.searchQuery}"
         oninput="AppState.searchQuery=this.value; debounceSchemeSearch()"/>
       ${AppState.searchQuery ? `
-        <button style="background:transparent;border:none;cursor:pointer;color:var(--clr-text-muted)" onclick="AppState.searchQuery=''; document.getElementById('scheme-search').value=''; renderFindSchemes(document.getElementById('page-content').firstElementChild || document.getElementById('page-content'))">
+        <button style="background:transparent;border:none;cursor:pointer;color:var(--clr-text-muted)" onclick="AppState.searchQuery=''; document.getElementById('scheme-search').value=''; applyAndRerender()">
           ${Icons.x}
         </button>
       ` : ''}
@@ -45,7 +86,7 @@ function renderFindSchemes(container) {
           <option value="updated">Recently Updated</option>
           <option value="popular">Most Popular</option>
         </select>
-        <span style="font-size:var(--fs-sm);color:var(--clr-text-muted)">${filteredSchemes.length} schemes found</span>
+        <span style="font-size:var(--fs-sm);color:var(--clr-text-muted)" id="schemes-count-label">${filteredSchemes.length} schemes found</span>
       </div>
     </div>
 
@@ -180,9 +221,11 @@ function renderSchemeGrid() {
   `;
 }
 
-function applyAndRerender() {
-  filteredSchemes = applyFilters();
+async function applyAndRerender() {
+  filteredSchemes = await fetchBackendSchemes();
   schemesPage = 1;
+  const countLabel = document.getElementById('schemes-count-label');
+  if (countLabel) countLabel.textContent = `${filteredSchemes.length} schemes found`;
   const grid = document.getElementById('scheme-grid');
   if (grid) grid.innerHTML = renderSchemeGrid();
 }

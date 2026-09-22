@@ -187,31 +187,37 @@ function profileSection(title, icon, content) {
   `;
 }
 
-function saveProfile(e) {
+async function saveProfile(e) {
   e.preventDefault();
   const btn = document.getElementById('save-profile-btn');
   btn.disabled = true;
   btn.innerHTML = `<span class="loading-spinner" style="width:16px;height:16px;border-width:2px"></span> Saving...`;
 
-  setTimeout(() => {
-    AppState.currentUser = {
-      ...AppState.currentUser,
-      name: document.getElementById('p-name').value,
-      age: parseInt(document.getElementById('p-age').value) || '',
+  const profileData = {
+    name: document.getElementById('p-name').value.trim(),
+    phone: document.getElementById('p-phone').value.trim(),
+    profile: {
+      age: parseInt(document.getElementById('p-age').value) || undefined,
       gender: document.getElementById('p-gender').value,
-      phone: document.getElementById('p-phone').value,
-      email: document.getElementById('p-email').value,
-      income: parseInt(document.getElementById('p-income').value) || '',
+      annualIncome: parseInt(document.getElementById('p-income').value) || undefined,
       education: document.getElementById('p-edu').value,
       occupation: document.getElementById('p-occ').value,
-      community: document.getElementById('p-cat').value,
-      disability: document.getElementById('p-disability').checked,
+      category: document.getElementById('p-cat').value,
+      disabilityStatus: document.getElementById('p-disability').checked,
       state: document.getElementById('p-state').value,
-      district: document.getElementById('p-dist').value,
-      area: document.getElementById('p-area').value,
-    };
-    showToast('Profile updated!', 'Your information has been saved successfully.', 'success');
+      district: document.getElementById('p-dist').value.trim(),
+      ruralUrban: document.getElementById('p-area').value,
+    }
+  };
+
+  try {
+    const res = await UserAPI.updateProfile(profileData);
+    AppState.currentUser = res.data.user;
+    showToast('Profile updated!', 'Your information has been saved to the backend successfully.', 'success');
+  } catch (err) {
+    showToast('Update failed', err.message || 'Could not save profile', 'error');
+  } finally {
     btn.disabled = false;
     btn.innerHTML = `${Icons.check} Save Changes`;
-  }, 800);
+  }
 }
