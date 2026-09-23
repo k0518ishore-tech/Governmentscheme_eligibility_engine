@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize app
   navigate('home');
 
+  
   // Mobile menu handler
   const mobileBtn = document.getElementById('mobile-menu-btn');
   if (mobileBtn) {
