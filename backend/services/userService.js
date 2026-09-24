@@ -5,6 +5,7 @@
 import User from '../models/User.js';
 import EligibilityResult from '../models/EligibilityResult.js';
 import Application from '../models/Application.js';
+import Bookmark from '../models/Bookmark.js';
 
 export const updateUserProfile = async (userId, updateData) => {
   const user = await User.findById(userId);
@@ -48,6 +49,17 @@ export const addSavedScheme = async (userId, schemeId) => {
     user.savedSchemes.push(schemeId);
     await user.save();
   }
+
+  // Sync with Bookmark collection
+  const existingBm = await Bookmark.findOne({ userId, schemeId });
+  if (!existingBm) {
+    await Bookmark.create({
+      userId,
+      schemeId,
+      bookmarkDate: new Date(),
+    });
+  }
+
   return user;
 };
 
@@ -61,6 +73,10 @@ export const removeSavedScheme = async (userId, schemeId) => {
 
   user.savedSchemes = user.savedSchemes.filter((id) => id.toString() !== schemeId.toString());
   await user.save();
+
+  // Sync with Bookmark collection
+  await Bookmark.findOneAndDelete({ userId, schemeId });
+
   return user;
 };
 
@@ -71,5 +87,16 @@ export const getSavedSchemes = async (userId) => {
     error.statusCode = 404;
     throw error;
   }
+
+  // Sync any savedSchemes to Bookmark collection
+  for (const scheme of user.savedSchemes) {
+    if (scheme && scheme._id) {
+      const exists = await Bookmark.findOne({ userId, schemeId: scheme._id });
+      if (!exists) {
+        await Bookmark.create({ userId, schemeId: scheme._id, bookmarkDate: new Date() });
+      }
+    }
+  }
+
   return user.savedSchemes;
 };

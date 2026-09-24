@@ -81,17 +81,21 @@ CLIENT_URL=http://localhost:5500
 Seed default schemes, default administrator, and demo citizen accounts into your MongoDB database:
 
 ```bash
-# Seed all initial schemes and admin account
-npm run seed:all
+# No sample schemes or credentials are included. Schemes can be entered from the admin interface.
 
-# Or seed individually:
-npm run seed        # Seeds initial schemes
-npm run seed:admin  # Seeds admin and demo citizen
+# Bootstrap the first admin with explicit environment variables:
+$env:BOOTSTRAP_ADMIN_NAME="Your Name"
+$env:BOOTSTRAP_ADMIN_EMAIL="admin@example.gov"
+$env:BOOTSTRAP_ADMIN_PASSWORD="use-a-long-unique-password"
+$env:MONGODB_URI="mongodb://127.0.0.1:27017/GovernmentSchemeDB"
+npm run seed:admin
 ```
 
-### Pre-configured Seed Credentials:
-- **Admin Account**: `admin@schemeguide.in` / `admin123`
-- **Demo Citizen Account**: `riya@example.com` / `password123`
+There are no pre-configured seed accounts. The bootstrap script requires credentials from your environment and refuses short passwords.
+
+### Add the verified PM Vishwakarma record
+
+`npm run add:pm-vishwakarma` inserts the sourced scheme if it is not already present and notifies existing citizen accounts. It does not clear or replace other schemes.
 
 ---
 
@@ -124,8 +128,8 @@ All request and response bodies use `application/json`.
 #### Request Example: `POST /api/auth/login`
 ```json
 {
-  "email": "riya@example.com",
-  "password": "password123"
+  "email": "citizen@example.com",
+  "password": "your-unique-password"
 }
 ```
 

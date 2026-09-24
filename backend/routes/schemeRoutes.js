@@ -28,8 +28,8 @@ router.get('/state/:state', getSchemesByState);
 router.get('/:id', getSchemeById);
 
 // Admin routes
-router.post('/', protect, adminOnly, createSchemeValidator, validate, createScheme);
-router.put('/:id', protect, adminOnly, updateSchemeValidator, validate, updateScheme);
+router.post('/', protect, adminOnly, ...createSchemeValidator, validate, createScheme);
+router.put('/:id', protect, adminOnly, ...updateSchemeValidator, validate, updateScheme);
 router.delete('/:id', protect, adminOnly, deleteScheme);
 
 export default router;

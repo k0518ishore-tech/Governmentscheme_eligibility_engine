@@ -22,7 +22,7 @@ const router = Router();
 router.use(protect);
 
 router.get('/me', getProfile);
-router.put('/me', updateProfileValidator, validate, updateProfile);
+router.put('/me', ...updateProfileValidator, validate, updateProfile);
 router.get('/me/results', getEligibilityResults);
 router.get('/me/applications', getApplications);
 router.get('/me/saved', getSavedSchemes);

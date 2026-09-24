@@ -54,21 +54,26 @@ export const getAllSchemes = async (query = {}) => {
   let sort = {};
   if (query.sort === 'popular') sort = { views: -1 };
   else if (query.sort === 'updated') sort = { updatedAt: -1 };
-  else sort = { popular: -1, views: -1 };
+  else sort = { updatedAt: -1 };
 
   // Pagination
   const page = parseInt(query.page) || 1;
   const limit = parseInt(query.limit) || 50;
   const skip = (page - 1) * limit;
 
-  const schemes = await Scheme.find(filter).sort(sort).skip(skip).limit(limit);
+  const schemes = await Scheme.find(filter)
+    .populate('departmentId', 'departmentName ministryName stateOrCentral')
+    .populate('categoryId', 'categoryName categoryDescription')
+    .sort(sort).skip(skip).limit(limit);
   const total = await Scheme.countDocuments(filter);
 
   return { schemes, total, page, totalPages: Math.ceil(total / limit) };
 };
 
 export const getSchemeById = async (id) => {
-  const scheme = await Scheme.findById(id);
+  const scheme = await Scheme.findById(id)
+    .populate('departmentId', 'departmentName ministryName stateOrCentral contactEmail')
+    .populate('categoryId', 'categoryName categoryDescription');
   if (!scheme) {
     const error = new Error('Scheme not found');
     error.statusCode = 404;
@@ -83,14 +88,14 @@ export const getSchemeById = async (id) => {
 };
 
 export const getSchemesByCategory = async (category) => {
-  return Scheme.find({ category, status: 'active' }).sort({ views: -1 });
+  return Scheme.find({ category, status: 'active' }).sort({ updatedAt: -1 });
 };
 
 export const getSchemesByState = async (state) => {
   return Scheme.find({
     state: { $in: [state, 'All States'] },
     status: 'active',
-  }).sort({ views: -1 });
+  }).sort({ updatedAt: -1 });
 };
 
 export const createScheme = async (data) => {

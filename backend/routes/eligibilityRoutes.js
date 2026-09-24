@@ -18,6 +18,6 @@ router.post('/check', eligibilityLimiter, (req, res, next) => {
     return protect(req, res, next);
   }
   next();
-}, eligibilityCheckValidator, validate, checkUserEligibility);
+}, ...eligibilityCheckValidator, validate, checkUserEligibility);
 
 export default router;

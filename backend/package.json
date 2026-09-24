@@ -9,7 +9,7 @@
     "start": "node server.js",
     "seed": "node seed/schemeSeed.js",
     "seed:admin": "node seed/adminSeed.js",
-    "seed:all": "node seed/schemeSeed.js && node seed/adminSeed.js"
+    "add:pm-vishwakarma": "node seed/addPMVishwakarma.js"
   },
   "keywords": [
     "government",

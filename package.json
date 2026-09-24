@@ -1,0 +1,13 @@
+{
+  "name": "schemeguide-app",
+  "version": "1.0.0",
+  "description": "Government Scheme Eligibility Engine — Full Stack",
+  "scripts": {
+    "dev:backend": "npm --prefix backend run dev",
+    "start:backend": "npm --prefix backend start",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "start:frontend": "npm --prefix frontend start",
+    "seed": "npm --prefix backend run seed",
+    "install:all": "npm --prefix backend install && npm --prefix frontend install"
+  }
+}

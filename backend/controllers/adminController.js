@@ -7,17 +7,22 @@ import Scheme from '../models/Scheme.js';
 import Application from '../models/Application.js';
 import EligibilityResult from '../models/EligibilityResult.js';
 import AuditLog from '../models/AuditLog.js';
+import Department from '../models/Department.js';
+import Category from '../models/Category.js';
+import Notification from '../models/Notification.js';
 import { successResponse, errorResponse } from '../utils/response.js';
 
 // GET /api/admin/dashboard
 export const getDashboard = async (req, res, next) => {
   try {
-    const [totalSchemes, activeSchemes, totalUsers, totalApplications, recentUsers, recentApps] =
+    const [totalSchemes, activeSchemes, totalUsers, totalApplications, totalDepartments, totalCategories, recentUsers, recentApps] =
       await Promise.all([
         Scheme.countDocuments(),
         Scheme.countDocuments({ status: 'active' }),
         User.countDocuments({ role: 'user' }),
         Application.countDocuments(),
+        Department.countDocuments(),
+        Category.countDocuments(),
         User.find({ role: 'user' }).sort({ createdAt: -1 }).limit(5).select('name email createdAt'),
         Application.find().sort({ createdAt: -1 }).limit(5).populate('userId', 'name email'),
       ]);
@@ -37,6 +42,8 @@ export const getDashboard = async (req, res, next) => {
         activeSchemes,
         totalUsers,
         totalApplications,
+        totalDepartments,
+        totalCategories,
       },
       appsByStatus,
       schemesByCategory,
@@ -113,7 +120,7 @@ export const getApplications = async (req, res, next) => {
 
     const applications = await Application.find(filter)
       .sort({ createdAt: -1 })
-      .populate('userId', 'name email phone')
+      .populate('userId', 'name email phone profile')
       .populate('schemeId', 'name category');
 
     successResponse(res, { applications });
@@ -134,7 +141,7 @@ export const updateApplicationStatus = async (req, res, next) => {
       req.params.id,
       { status },
       { new: true }
-    ).populate('userId', 'name email');
+    ).populate('userId', 'name email').populate('schemeId', 'name');
 
     if (!application) {
       return errorResponse(res, 'Application not found', 404);
@@ -148,6 +155,19 @@ export const updateApplicationStatus = async (req, res, next) => {
       resourceId: application._id,
       details: { newStatus: status },
     });
+
+    try {
+      await Notification.create({
+        userId: application.userId._id,
+        schemeId: application.schemeId?._id,
+        title: 'Application status updated',
+        type: 'application_update',
+        message: `Your application for ${application.schemeId?.name || application.schemeName} is now ${status}.`,
+        priority: status === 'Rejected' ? 'medium' : 'high',
+      });
+    } catch (notificationError) {
+      console.error('[Notifications] Application status was updated, but the citizen notification failed:', notificationError.message);
+    }
 
     successResponse(res, { application }, `Application status updated to ${status}`);
   } catch (error) {

@@ -22,12 +22,20 @@ const schemeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    departmentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Department',
+    },
     ministry: {
       type: String,
     },
     category: {
       type: String,
       required: true,
+    },
+    categoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category',
     },
     schemeType: {
       type: String,
@@ -109,6 +117,14 @@ const schemeSchema = new mongoose.Schema(
     applicationUrl: {
       type: String,
     },
+    sourceUrl: {
+      type: String,
+      trim: true,
+    },
+    eligibilitySourceUrl: {
+      type: String,
+      trim: true,
+    },
     tags: {
       type: [String],
       default: [],
@@ -138,6 +154,11 @@ const schemeSchema = new mongoose.Schema(
 
 // Text index for search
 schemeSchema.index({ name: 'text', shortDescription: 'text', category: 'text', tags: 'text' });
+
+// Additional indexes for new references and common queries
+schemeSchema.index({ departmentId: 1 });
+schemeSchema.index({ categoryId: 1 });
+schemeSchema.index({ status: 1 });
 
 const Scheme = mongoose.model('Scheme', schemeSchema);
 export default Scheme;

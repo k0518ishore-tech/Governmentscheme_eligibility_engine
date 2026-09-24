@@ -31,6 +31,10 @@ const applicationSchema = new mongoose.Schema(
     notes: {
       type: String,
     },
+    applicantDetails: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
+    },
   },
   {
     timestamps: true,

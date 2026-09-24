@@ -4,10 +4,14 @@
 // This is the CORE of the backend.
 // It evaluates a user's profile against scheme rules stored in MongoDB.
 // Returns explainable results matching the frontend's expected format.
+//
+// UPDATED: Now checks the EligibilityRule collection first.
+// Falls back to embedded scheme.eligibilityRules if no dedicated rules.
 // ============================================================
 
 import Scheme from '../models/Scheme.js';
 import EligibilityResult from '../models/EligibilityResult.js';
+import EligibilityRule from '../models/EligibilityRule.js';
 
 /**
  * Format currency for display in messages
@@ -213,10 +217,78 @@ function evaluateCondition(conditionName, userValue, rule, scheme) {
 }
 
 /**
+ * Convert an EligibilityRule document from the collection into the
+ * internal rules format used by evaluateScheme().
+ */
+function convertDedicatedRule(rule) {
+  return {
+    age: {
+      min: rule.minimumAge ?? undefined,
+      max: rule.maximumAge ?? undefined,
+    },
+    gender: rule.gender && rule.gender.length > 0 ? rule.gender : undefined,
+    maxAnnualIncome: rule.maximumIncome ?? undefined,
+    occupations: rule.occupation && rule.occupation.length > 0 ? rule.occupation : undefined,
+    education: rule.educationalLevel && rule.educationalLevel.length > 0 ? rule.educationalLevel : undefined,
+    categories: rule.socialCategory && rule.socialCategory.length > 0 ? rule.socialCategory : undefined,
+    states: rule.state && rule.state.length > 0 ? rule.state : undefined,
+    districts: rule.district && rule.district.length > 0 ? rule.district : undefined,
+    disabilityRequired: rule.disabilityStatus || false,
+    maritalStatus: rule.maritalStatus && rule.maritalStatus.length > 0 ? rule.maritalStatus : undefined,
+    ruralUrban: rule.residenceType && rule.residenceType.length > 0 ? rule.residenceType : undefined,
+  };
+}
+
+/**
+ * Merge multiple dedicated rules into a single rules object.
+ * Uses the most restrictive values (narrowest ranges).
+ */
+function mergeDedicatedRules(dedicatedRules) {
+  if (dedicatedRules.length === 1) {
+    return convertDedicatedRule(dedicatedRules[0]);
+  }
+
+  // Start with the first rule and merge others
+  const merged = convertDedicatedRule(dedicatedRules[0]);
+
+  for (let i = 1; i < dedicatedRules.length; i++) {
+    const r = convertDedicatedRule(dedicatedRules[i]);
+
+    // Age: take the most restrictive range
+    if (r.age) {
+      if (!merged.age) merged.age = {};
+      if (r.age.min != null) merged.age.min = Math.max(merged.age.min || 0, r.age.min);
+      if (r.age.max != null) merged.age.max = Math.min(merged.age.max || 120, r.age.max);
+    }
+
+    // Income: take the most restrictive
+    if (r.maxAnnualIncome != null) {
+      merged.maxAnnualIncome = merged.maxAnnualIncome != null
+        ? Math.min(merged.maxAnnualIncome, r.maxAnnualIncome)
+        : r.maxAnnualIncome;
+    }
+
+    // Arrays: union approach for multiple rules
+    ['gender', 'occupations', 'education', 'categories', 'states', 'districts', 'maritalStatus', 'ruralUrban'].forEach((key) => {
+      if (r[key] && r[key].length > 0) {
+        if (!merged[key] || merged[key].length === 0) {
+          merged[key] = r[key];
+        }
+      }
+    });
+
+    // Disability: if any rule requires it, require it
+    if (r.disabilityRequired) merged.disabilityRequired = true;
+  }
+
+  return merged;
+}
+
+/**
  * Evaluate a user's profile against a single scheme's eligibility rules.
  */
-function evaluateScheme(scheme, userProfile) {
-  const rules = scheme.eligibilityRules || {};
+function evaluateScheme(scheme, userProfile, rulesOverride = null) {
+  const rules = rulesOverride || scheme.eligibilityRules || {};
   const conditionResults = [];
 
   // Map scheme rules to conditions
@@ -272,6 +344,9 @@ function evaluateScheme(scheme, userProfile) {
 /**
  * Main eligibility check function.
  * Fetches all active schemes, evaluates each, stores results, returns response.
+ *
+ * UPDATED: For each scheme, first checks the EligibilityRule collection.
+ * If dedicated rules exist, uses those. Otherwise falls back to embedded rules.
  */
 export const checkEligibility = async (userProfile, userId = null) => {
   // Fetch all active schemes
@@ -285,8 +360,32 @@ export const checkEligibility = async (userProfile, userId = null) => {
     };
   }
 
+  // Pre-fetch all dedicated eligibility rules for all schemes in one query
+  const schemeIds = schemes.map((s) => s._id);
+  const allDedicatedRules = await EligibilityRule.find({ schemeId: { $in: schemeIds } });
+
+  // Group rules by schemeId
+  const rulesByScheme = {};
+  allDedicatedRules.forEach((rule) => {
+    const key = rule.schemeId.toString();
+    if (!rulesByScheme[key]) rulesByScheme[key] = [];
+    rulesByScheme[key].push(rule);
+  });
+
   // Evaluate each scheme
-  const results = schemes.map((scheme) => evaluateScheme(scheme, userProfile));
+  const results = schemes.map((scheme) => {
+    const schemeKey = scheme._id.toString();
+    const dedicatedRules = rulesByScheme[schemeKey];
+
+    if (dedicatedRules && dedicatedRules.length > 0) {
+      // Use dedicated EligibilityRule documents
+      const mergedRules = mergeDedicatedRules(dedicatedRules);
+      return evaluateScheme(scheme, userProfile, mergedRules);
+    } else {
+      // Fallback to embedded eligibilityRules on scheme document
+      return evaluateScheme(scheme, userProfile);
+    }
+  });
 
   const eligibleCount = results.filter((r) => r.status === 'ELIGIBLE').length;
 
